@@ -1,35 +1,36 @@
 # VisionEdge
 
-A GPU-accelerated Edge AI pipeline for real-time object detection on RTSP streams using YOLOv10, ONNX, TensorRT, and WebRTC.
+A GPU-accelerated Edge AI pipeline for real-time object detection on RTSP streams using YOLOv10, ONNX Runtime, TensorRT, FastAPI, and NVIDIA GPU acceleration.
 
 ---
 
-## 🚀 Project Overview
+## 🚀 Features
 
-VisionEdge is designed to perform real-time object detection on live video streams while keeping the entire pipeline GPU accelerated for maximum performance.
-
-The project aims to:
-
-- Decode RTSP streams using GPU acceleration
-- Run YOLO object detection with minimal latency
-- Optimize inference using ONNX and TensorRT
-- Stream annotated video to a React frontend using WebRTC
+- Real-time object detection using YOLOv10
+- GPU-accelerated inference pipeline
+- ONNX model export and validation
+- ONNX Runtime inference
+- TensorRT optimization (Coming Soon)
+- FastAPI backend
+- Docker support
+- Modular AI pipeline architecture
 
 ---
 
 ## 🛠 Tech Stack
 
 - Python 3.12
-- FastAPI
 - PyTorch
-- YOLOv10 (Ultralytics)
-- CUDA Toolkit 13
-- TensorRT
+- Ultralytics YOLOv10
+- ONNX
 - ONNX Runtime
+- TensorRT (Upcoming)
+- CUDA
 - OpenCV
-- PyAV
+- NumPy
+- FastAPI
 - aiortc
-- React
+- PyAV
 - Docker
 - Git & GitHub
 
@@ -37,42 +38,30 @@ The project aims to:
 
 ## 📂 Project Structure
 
-```
-VisionEdge/
+```text
+VisionEdge
 │
-├── assets/
-│   └── images/
+├── backend
+│   ├── models
+│   │   ├── weights
+│   │   ├── onnx
+│   │   └── tensorrt
+│   │
+│   ├── pipeline
+│   │   ├── loader.py
+│   │   ├── predictor.py
+│   │   ├── export_onnx.py
+│   │   ├── validate_onnx.py
+│   │   ├── preprocess.py
+│   │   └── onnx_inference.py
+│   │
+│   └── config.py
 │
-├── backend/
-│   ├── api/
-│   ├── decoder/
-│   ├── models/
-│   ├── pipeline/
-│   ├── streaming/
-│   ├── telemetry/
-│   └── utils/
-│
-├── docker/
-├── frontend/
-├── scripts/
-│
-├── config.py
-├── main.py
+├── assets
+├── frontend
+├── docker
 └── README.md
 ```
-
----
-
-## ✅ Features Completed
-
-- GPU-enabled Python environment
-- CUDA Toolkit installation
-- PyTorch with CUDA support
-- YOLOv10 model loading
-- Image inference pipeline
-- Object detection on images
-- Modular backend architecture
-- Git branching workflow
 
 ---
 
@@ -82,43 +71,71 @@ VisionEdge/
 - Project setup
 - Repository structure
 - FastAPI backend
-- Git initialization
+- Git workflow
 
 ### ✅ Day 2
 - Python 3.12 environment
-- CUDA Toolkit installation
+- CUDA installation
 - GPU-enabled PyTorch
-- Project dependencies
+- AI library installation
+- Docker configuration
 
 ### ✅ Day 3
 - YOLOv10 integration
 - Model loader
 - Image inference pipeline
-- Detection result generation
-- Pull Request workflow
+- Object detection
+- Git branching workflow
+
+### ✅ Day 4
+- Exported YOLOv10 to ONNX
+- ONNX model validation
+- Manual image preprocessing
+- ONNX Runtime integration
+- ONNX inference pipeline
+- Performance measurement
 
 ---
 
-## 🚧 Upcoming Milestones
+## 📊 Current Pipeline
 
-- [ ] Export YOLOv10 to ONNX
-- [ ] ONNX Runtime inference
-- [ ] TensorRT engine generation
-- [ ] RTSP video decoding
-- [ ] WebRTC streaming
-- [ ] React dashboard
-- [ ] Docker deployment
+```text
+Image
+   │
+   ▼
+Preprocessing
+   │
+   ▼
+YOLOv10 (.pt)
+   │
+   ▼
+ONNX Export
+   │
+   ▼
+YOLOv10 (.onnx)
+   │
+   ▼
+ONNX Runtime
+   │
+   ▼
+Detections
+```
 
 ---
 
-## 👥 Team
+## 🎯 Upcoming
 
-Internship Project
-
-Team Size: **5 Members**
+- TensorRT Engine Conversion
+- RTSP Stream Processing
+- GPU Video Decoding
+- FastAPI REST APIs
+- WebRTC Streaming
+- React Dashboard
+- Performance Benchmarking
+- Docker Deployment
 
 ---
 
-## 📄 License
+## 📌 Current Status
 
-This project is developed for educational and internship purposes.
+🚧 **Day 4 Complete — ONNX Runtime inference pipeline is operational.**
