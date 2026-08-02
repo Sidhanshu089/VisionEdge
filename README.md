@@ -194,13 +194,27 @@ Annotated Output Video
 | TensorRT Engine | ✅ |
 | Video Inference | ✅ |
 
+## 📅 Day 7 – ONNX Runtime Video Inference
+
+### ✅ Completed
+- Implemented video inference using the ONNX model.
+- Integrated ONNX Runtime into the video pipeline.
+- Benchmarked inference performance.
+- Generated annotated output video.
+
+### 📊 Results
+- Frames Processed: 602
+- Average Inference Time: 16.22 ms/frame
+- Approximate AI FPS: 61.66 FPS
+
+### 🔜 Next Steps
+- Verify ONNX Runtime GPU execution.
+- Integrate TensorRT into the video inference pipeline.
+- Benchmark PyTorch vs ONNX Runtime vs TensorRT.
+
 ---
 
 # 🎯 Upcoming Development
-
-## Day 7
-- Integrate ONNX Runtime into the video pipeline
-- Benchmark PyTorch vs ONNX Runtime
 
 ## Day 8
 - Integrate TensorRT into the video pipeline
