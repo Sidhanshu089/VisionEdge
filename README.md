@@ -212,13 +212,46 @@ Annotated Output Video
 - Integrate TensorRT into the video inference pipeline.
 - Benchmark PyTorch vs ONNX Runtime vs TensorRT.
 
+# Day 8 – Native TensorRT Inference
+
+## Objective
+Implement native TensorRT inference using a serialized TensorRT engine with manual GPU memory management.
+
+## Completed Tasks
+- Loaded the TensorRT engine (.engine)
+- Created the TensorRT execution context
+- Implemented GPU memory allocation for input and output tensors
+- Performed Host → Device memory transfer
+- Executed inference using TensorRT
+- Copied inference output from Device → Host
+- Verified successful inference with output shape `(1, 300, 6)`
+
+## Technologies Used
+- TensorRT 11.1
+- CUDA Runtime API
+- NumPy
+- Python
+
+## Test Result
+
+```text
+✅ TensorRT engine loaded.
+✅ Execution context created.
+Input : images (1, 3, 640, 640)
+Output: output0 (1, 300, 6)
+
+✅ GPU memory allocated successfully.
+Input Buffer : 4915200 bytes
+Output Buffer: 7200 bytes
+
+(1, 300, 6)
+```
+
+## Status
+✅ Day 8 completed successfully.
 ---
 
 # 🎯 Upcoming Development
-
-## Day 8
-- Integrate TensorRT into the video pipeline
-- Benchmark TensorRT vs ONNX Runtime
 
 ## Day 9
 - RTSP stream processing
