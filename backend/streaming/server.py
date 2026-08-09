@@ -3,7 +3,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Request
-
+from backend.streaming.video_tracker import TensorRTVideoTrack
 from aiortc import RTCPeerConnection, RTCSessionDescription
 from aiortc.contrib.media import MediaPlayer
 
@@ -49,8 +49,11 @@ async def offer(request: Request):
     player = MediaPlayer(str(VIDEO_PATH))
 
     if player.video:
-        pc.addTrack(player.video)
-        print("✅ Video track added.")
+        processed_track = TensorRTVideoTrack(player.video)
+
+        pc.addTrack(processed_track)
+
+        print("✅ TensorRT video track added.")
 
     await pc.setRemoteDescription(offer)
 
