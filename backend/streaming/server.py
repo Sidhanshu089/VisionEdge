@@ -22,7 +22,7 @@ app.add_middleware(
 VIDEO_PATH = Path("assets/videos/input/Video1.mp4")
 
 peer_connections = set()
-
+active_track = None
 
 @app.get("/")
 def root():
@@ -30,9 +30,22 @@ def root():
         "message": "VisionEdge WebRTC Backend Running"
     }
 
+@app.get("/metrics")
+def metrics():
+
+    if active_track is None:
+        return {
+            "active": False
+        }
+
+    return {
+        "active": True,
+        **active_track.latest_metrics
+    }
 
 @app.post("/offer")
 async def offer(request: Request):
+    global active_track
 
     params = await request.json()
 
@@ -43,6 +56,7 @@ async def offer(request: Request):
 
     pc = RTCPeerConnection()
     peer_connections.add(pc)
+    active_track = None
 
     print("✅ WebRTC peer connection created.")
 
@@ -50,6 +64,8 @@ async def offer(request: Request):
 
     if player.video:
         processed_track = TensorRTVideoTrack(player.video)
+
+        active_track = processed_track
 
         pc.addTrack(processed_track)
 

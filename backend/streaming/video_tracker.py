@@ -1,3 +1,24 @@
+COCO_CLASSES = [
+    "person", "bicycle", "car", "motorcycle", "airplane",
+    "bus", "train", "truck", "boat", "traffic light",
+    "fire hydrant", "stop sign", "parking meter", "bench",
+    "bird", "cat", "dog", "horse", "sheep", "cow",
+    "elephant", "bear", "zebra", "giraffe", "backpack",
+    "umbrella", "handbag", "tie", "suitcase", "frisbee",
+    "skis", "snowboard", "sports ball", "kite", "baseball bat",
+    "baseball glove", "skateboard", "surfboard", "tennis racket",
+    "bottle", "wine glass", "cup", "fork", "knife", "spoon",
+    "bowl", "banana", "apple", "sandwich", "orange", "broccoli",
+    "carrot", "hot dog", "pizza", "donut", "cake", "chair",
+    "couch", "potted plant", "bed", "dining table", "toilet",
+    "tv", "laptop", "mouse", "remote", "keyboard", "cell phone",
+    "microwave", "oven", "toaster", "sink", "refrigerator",
+    "book", "clock", "vase", "scissors", "teddy bear",
+    "hair drier", "toothbrush"
+]
+
+import time
+
 import cv2
 import numpy as np
 
@@ -10,8 +31,8 @@ from backend.pipeline.trt_inference import TensorRTInference
 class TensorRTVideoTrack(MediaStreamTrack):
     """
     Receives frames from aiortc, performs YOLOv10 TensorRT
-    inference using letterbox preprocessing, draws detections,
-    and returns the processed WebRTC frame.
+    inference with letterbox preprocessing, draws detections,
+    and reports live performance metrics.
     """
 
     kind = "video"
@@ -25,36 +46,41 @@ class TensorRTVideoTrack(MediaStreamTrack):
 
         self.trt = TensorRTInference()
 
+        self.frame_count = 0
+        self.total_time = 0.0
+        self.latest_metrics = {
+            "frame": 0,
+            "preprocess": 0.0,
+            "tensorrt": 0.0,
+            "postprocess": 0.0,
+            "total": 0.0,
+            "average": 0.0,
+            "fps": 0.0,
+            "detections": 0,
+        }
+
         print("✅ TensorRT video tracker ready.")
 
     def letterbox(self, image, new_shape=(640, 640)):
-        """
-        Resize image while maintaining aspect ratio and
-        add padding to reach the target dimensions.
-        """
 
         original_height, original_width = image.shape[:2]
 
         target_width, target_height = new_shape
 
-        # Calculate scale
         scale = min(
             target_width / original_width,
             target_height / original_height
         )
 
-        # New resized dimensions
         new_width = int(round(original_width * scale))
         new_height = int(round(original_height * scale))
 
-        # Resize while preserving aspect ratio
         resized = cv2.resize(
             image,
             (new_width, new_height),
             interpolation=cv2.INTER_LINEAR
         )
 
-        # Calculate padding
         pad_width = target_width - new_width
         pad_height = target_height - new_height
 
@@ -64,7 +90,6 @@ class TensorRTVideoTrack(MediaStreamTrack):
         top = pad_height // 2
         bottom = pad_height - top
 
-        # Add padding
         padded = cv2.copyMakeBorder(
             resized,
             top,
@@ -79,63 +104,80 @@ class TensorRTVideoTrack(MediaStreamTrack):
 
     async def recv(self):
 
-        # Receive original frame
+        frame_start = time.perf_counter()
+
+        # -------------------------------------------------
+        # RECEIVE FRAME
+        # -------------------------------------------------
+
         frame = await self.source_track.recv()
 
-        # Convert aiortc frame to OpenCV
         image = frame.to_ndarray(format="bgr24")
 
         original_height, original_width = image.shape[:2]
 
         # -------------------------------------------------
-        # 1. LETTERBOX PREPROCESSING
+        # PREPROCESSING
         # -------------------------------------------------
+
+        preprocess_start = time.perf_counter()
 
         processed, scale, pad_x, pad_y = self.letterbox(
             image,
             (640, 640)
         )
 
-        # BGR → RGB
         rgb = cv2.cvtColor(
             processed,
             cv2.COLOR_BGR2RGB
         )
 
-        # Convert to float32 and normalize
         rgb = rgb.astype(np.float32) / 255.0
 
-        # HWC → CHW
         tensor = np.transpose(
             rgb,
             (2, 0, 1)
         )
 
-        # Add batch dimension
         tensor = np.expand_dims(
             tensor,
             axis=0
         )
 
+        preprocess_time = (
+            time.perf_counter() - preprocess_start
+        ) * 1000
+
         # -------------------------------------------------
-        # 2. TENSORRT INFERENCE
+        # TENSORRT
         # -------------------------------------------------
 
+        inference_start = time.perf_counter()
+
         output = self.trt.infer(tensor)
+
+        inference_time = (
+            time.perf_counter() - inference_start
+        ) * 1000
 
         detections = output[0]
 
         # -------------------------------------------------
-        # 3. POSTPROCESSING
+        # POSTPROCESSING
         # -------------------------------------------------
+
+        postprocess_start = time.perf_counter()
+
+        detection_count = 0
 
         for detection in detections:
 
             x1, y1, x2, y2, confidence, class_id = detection
 
-            # Confidence threshold
             if confidence < 0.35:
                 continue
+
+            detection_count += 1
 
             # Remove letterbox padding
             x1 = (x1 - pad_x) / scale
@@ -143,7 +185,7 @@ class TensorRTVideoTrack(MediaStreamTrack):
             x2 = (x2 - pad_x) / scale
             y2 = (y2 - pad_y) / scale
 
-            # Clamp coordinates to original frame
+            # Clamp coordinates
             x1 = max(0, min(original_width - 1, x1))
             y1 = max(0, min(original_height - 1, y1))
             x2 = max(0, min(original_width - 1, x2))
@@ -166,7 +208,12 @@ class TensorRTVideoTrack(MediaStreamTrack):
             )
 
             # Label
-            label = f"class {class_id} {confidence:.2f}"
+            if 0 <= class_id < len(COCO_CLASSES):
+                class_name = COCO_CLASSES[class_id]
+            else:
+                class_name = f"class_{class_id}"
+
+            label = f"{class_name} {confidence:.2f}"
 
             cv2.putText(
                 image,
@@ -178,8 +225,79 @@ class TensorRTVideoTrack(MediaStreamTrack):
                 2
             )
 
+        postprocess_time = (
+            time.perf_counter() - postprocess_start
+        ) * 1000
+
         # -------------------------------------------------
-        # 4. CONVERT BACK TO WEBRTC FRAME
+        # TOTAL TIME
+        # -------------------------------------------------
+
+        total_time = (
+            time.perf_counter() - frame_start
+        ) * 1000
+
+        self.frame_count += 1
+        self.total_time += total_time
+
+        average_time = (
+            self.total_time / self.frame_count
+        )
+
+        pipeline_fps = 1000 / average_time
+
+        self.latest_metrics = {
+            "frame": self.frame_count,
+            "preprocess": round(preprocess_time, 2),
+            "tensorrt": round(inference_time, 2),
+            "postprocess": round(postprocess_time, 2),
+            "total": round(total_time, 2),
+            "average": round(average_time, 2),
+            "fps": round(pipeline_fps, 2),
+            "detections": detection_count
+        }
+
+        # Print every 30 frames
+        if self.frame_count % 30 == 0:
+
+            print(
+                "\n📊 VisionEdge Performance"
+            )
+
+            print(
+                f"Frame        : {self.frame_count}"
+            )
+
+            print(
+                f"Preprocess   : {preprocess_time:.2f} ms"
+            )
+
+            print(
+                f"TensorRT     : {inference_time:.2f} ms"
+            )
+
+            print(
+                f"Postprocess  : {postprocess_time:.2f} ms"
+            )
+
+            print(
+                f"Total        : {total_time:.2f} ms"
+            )
+
+            print(
+                f"Average      : {average_time:.2f} ms"
+            )
+
+            print(
+                f"Pipeline FPS : {pipeline_fps:.2f}"
+            )
+
+            print(
+                f"Detections   : {detection_count}"
+            )
+
+        # -------------------------------------------------
+        # RETURN WEBRTC FRAME
         # -------------------------------------------------
 
         new_frame = VideoFrame.from_ndarray(
@@ -187,7 +305,6 @@ class TensorRTVideoTrack(MediaStreamTrack):
             format="bgr24"
         )
 
-        # Preserve timing
         new_frame.pts = frame.pts
         new_frame.time_base = frame.time_base
 
