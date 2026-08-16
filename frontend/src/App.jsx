@@ -781,59 +781,207 @@ function App() {
 
           </div>
 
-          <div className="gpu-history-chart">
+          {/* ----------------------------------------- */}
+          {/* GPU UTILIZATION */}
+          {/* ----------------------------------------- */}
 
-            {gpuHistory.length === 0 ? (
+          <div className="telemetry-row">
 
-              <div className="gpu-history-empty">
-                Start the stream to collect GPU telemetry
-              </div>
+            <div className="telemetry-label">
+              <span>GPU Utilization</span>
+              <strong>
+                {gpuMetrics.utilization}
+              </strong>
+            </div>
 
-            ) : (
+            <div className="telemetry-track">
 
-              gpuHistory.map((sample, index) => {
-
-                const maxUtilization = Math.max(
-                  ...gpuHistory.map(
-                    (item) => item.utilization
-                  ),
-                  1
-                );
+              {gpuHistory.map((sample, index) => {
 
                 const height = Math.max(
-                  8,
-                  (sample.utilization / maxUtilization) * 100
+                  4,
+                  Math.min(sample.utilization, 100)
                 );
 
                 return (
                   <div
-                    className="gpu-history-bar"
-                    key={`${sample.time}-${index}`}
+                    key={`gpu-${sample.time}-${index}`}
+                    className="telemetry-bar gpu-utilization-bar"
                     style={{
                       height: `${height}%`,
                     }}
                     title={`${sample.time} • GPU ${sample.utilization.toFixed(
                       1
-                    )}% • VRAM ${sample.memory.toFixed(
-                      0
-                    )} MB • ${sample.temperature.toFixed(
-                      0
-                    )}°C • ${sample.power.toFixed(2)} W`}
+                    )}%`}
                   ></div>
                 );
 
-              })
+              })}
 
-            )}
+            </div>
 
           </div>
 
+          {/* ----------------------------------------- */}
+          {/* VRAM */}
+          {/* ----------------------------------------- */}
+
+          <div className="telemetry-row">
+
+            <div className="telemetry-label">
+              <span>VRAM Usage</span>
+              <strong>
+                {gpuMetrics.memory}
+              </strong>
+            </div>
+
+            <div className="telemetry-track">
+
+              {gpuHistory.map((sample, index) => {
+
+                const maxMemory = Math.max(
+                  ...gpuHistory.map(
+                    (item) => item.memory
+                  ),
+                  1
+                );
+
+                const height = Math.max(
+                  4,
+                  (sample.memory / maxMemory) * 100
+                );
+
+                return (
+                  <div
+                    key={`memory-${sample.time}-${index}`}
+                    className="telemetry-bar gpu-memory-bar"
+                    style={{
+                      height: `${height}%`,
+                    }}
+                    title={`${sample.time} • VRAM ${sample.memory.toFixed(
+                      0
+                    )} MB`}
+                  ></div>
+                );
+
+              })}
+
+            </div>
+
+          </div>
+
+          {/* ----------------------------------------- */}
+          {/* TEMPERATURE */}
+          {/* ----------------------------------------- */}
+
+          <div className="telemetry-row">
+
+            <div className="telemetry-label">
+              <span>Temperature</span>
+              <strong>
+                {gpuMetrics.temperature}
+              </strong>
+            </div>
+
+            <div className="telemetry-track">
+
+              {gpuHistory.map((sample, index) => {
+
+                const maxTemperature = Math.max(
+                  ...gpuHistory.map(
+                    (item) => item.temperature
+                  ),
+                  1
+                );
+
+                const height = Math.max(
+                  4,
+                  (sample.temperature / maxTemperature) * 100
+                );
+
+                return (
+                  <div
+                    key={`temperature-${sample.time}-${index}`}
+                    className="telemetry-bar gpu-temperature-bar"
+                    style={{
+                      height: `${height}%`,
+                    }}
+                    title={`${sample.time} • Temperature ${sample.temperature.toFixed(
+                      0
+                    )}°C`}
+                  ></div>
+                );
+
+              })}
+
+            </div>
+
+          </div>
+
+          {/* ----------------------------------------- */}
+          {/* POWER */}
+          {/* ----------------------------------------- */}
+
+          <div className="telemetry-row">
+
+            <div className="telemetry-label">
+              <span>Power Draw</span>
+              <strong>
+                {gpuMetrics.power}
+              </strong>
+            </div>
+
+            <div className="telemetry-track">
+
+              {gpuHistory.map((sample, index) => {
+
+                const maxPower = Math.max(
+                  ...gpuHistory.map(
+                    (item) => item.power
+                  ),
+                  1
+                );
+
+                const height = Math.max(
+                  4,
+                  (sample.power / maxPower) * 100
+                );
+
+                return (
+                  <div
+                    key={`power-${sample.time}-${index}`}
+                    className="telemetry-bar gpu-power-bar"
+                    style={{
+                      height: `${height}%`,
+                    }}
+                    title={`${sample.time} • Power ${sample.power.toFixed(
+                      2
+                    )} W`}
+                  ></div>
+                );
+
+              })}
+
+            </div>
+
+          </div>
+
+          {gpuHistory.length === 0 && (
+
+            <div className="gpu-history-empty">
+              Start the stream to collect GPU telemetry
+            </div>
+
+          )}
+
           <div className="gpu-history-footer">
 
-            <span>GPU Utilization</span>
+            <span>
+              GPU telemetry
+            </span>
 
             <span>
-              Hover bars for detailed telemetry
+              Hover bars for detailed measurements
             </span>
 
           </div>

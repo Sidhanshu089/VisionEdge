@@ -678,26 +678,7 @@ footer {
   font-size: 18px;
 }
 
-.gpu-history-chart {
-  height: 180px;
-  display: flex;
-  align-items: flex-end;
-  gap: 3px;
-  padding: 15px;
-  background: #0d141c;
-  border: 1px solid #263342;
-  border-radius: 8px;
-  overflow: hidden;
-}
 
-.gpu-history-bar {
-  flex: 1;
-  min-width: 3px;
-  background: #00e89a;
-  border-radius: 3px 3px 0 0;
-  opacity: 0.8;
-  transition: height 0.3s ease;
-}
 
 .gpu-history-footer {
   display: flex;
@@ -715,4 +696,77 @@ footer {
   .gpu-history-stats {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* ================================================= */
+/* GPU TELEMETRY ROWS */
+/* ================================================= */
+
+.telemetry-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.telemetry-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.telemetry-label span {
+  color: #8fa3b8;
+  font-size: 11px;
+}
+
+.telemetry-label strong {
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.telemetry-track {
+  height: 80px;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  padding: 8px;
+  background: #0d141c;
+  border: 1px solid #263342;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.telemetry-bar {
+  flex: 1;
+  min-width: 3px;
+  border-radius: 2px 2px 0 0;
+  opacity: 0.85;
+  transition: height 0.3s ease;
+}
+
+.gpu-utilization-bar {
+  background: #00e89a;
+}
+
+.gpu-memory-bar {
+  background: #4da6ff;
+}
+
+.gpu-temperature-bar {
+  background: #ffb347;
+}
+
+.gpu-power-bar {
+  background: #ff6b6b;
+}
+
+@media (max-width: 700px) {
+
+  .telemetry-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
 }
