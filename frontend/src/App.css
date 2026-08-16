@@ -612,3 +612,107 @@ footer {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ================================================= */
+/* GPU PERFORMANCE HISTORY */
+/* ================================================= */
+
+.gpu-history-card {
+  background: #111820;
+  border: 1px solid #263342;
+  border-radius: 10px;
+  padding: 22px;
+  margin-top: 16px;
+}
+
+.gpu-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.gpu-history-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.gpu-history-header p {
+  margin: 5px 0 0;
+  color: #8fa3b8;
+  font-size: 12px;
+}
+
+.gpu-history-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #00e89a;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.gpu-history-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.gpu-history-stats > div {
+  background: #151d27;
+  border: 1px solid #263342;
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.gpu-history-stats span {
+  display: block;
+  color: #8fa3b8;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.gpu-history-stats strong {
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.gpu-history-chart {
+  height: 180px;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  padding: 15px;
+  background: #0d141c;
+  border: 1px solid #263342;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.gpu-history-bar {
+  flex: 1;
+  min-width: 3px;
+  background: #00e89a;
+  border-radius: 3px 3px 0 0;
+  opacity: 0.8;
+  transition: height 0.3s ease;
+}
+
+.gpu-history-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  color: #66798d;
+  font-size: 10px;
+}
+
+.gpu-history-footer span:first-child {
+  color: #8fa3b8;
+}
+
+@media (max-width: 700px) {
+  .gpu-history-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

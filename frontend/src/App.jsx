@@ -30,6 +30,7 @@ function App() {
   });
 
   const [performanceHistory, setPerformanceHistory] = useState([]);
+  const [gpuHistory, setGpuHistory] = useState([]);
 
 
 
@@ -59,6 +60,21 @@ function App() {
           power: `${Number(data.gpu.power).toFixed(2)} W`,
         });
       }
+
+      setGpuHistory((previous) => {
+        const next = [
+          ...previous,
+          {
+            time: new Date().toLocaleTimeString(),
+            utilization: Number(data.gpu.gpu_utilization) || 0,
+            memory: Number(data.gpu.memory_used) || 0,
+            temperature: Number(data.gpu.temperature) || 0,
+            power: Number(data.gpu.power) || 0,
+          },
+        ];
+
+        return next.slice(-30);
+      });
 
       console.log("🖥️ System Status:", data);
 
@@ -327,6 +343,7 @@ function App() {
     });
 
     setPerformanceHistory([]);
+    setGpuHistory([]);
   }
 
   // -------------------------------------------------
@@ -704,6 +721,120 @@ function App() {
                 Current power draw
               </small>
             </div>
+
+          </div>
+
+        </section>
+
+        {/* ----------------------------------------- */}
+        {/* GPU PERFORMANCE HISTORY */}
+        {/* ----------------------------------------- */}
+
+        <section className="gpu-history-card">
+
+          <div className="gpu-history-header">
+
+            <div>
+              <h2>GPU Performance History</h2>
+
+              <p>
+                NVIDIA RTX 3050 telemetry over the last 30 seconds
+              </p>
+            </div>
+
+            <div className="gpu-history-live">
+              <span className="status-dot active"></span>
+              LIVE
+            </div>
+
+          </div>
+
+          <div className="gpu-history-stats">
+
+            <div>
+              <span>GPU Utilization</span>
+              <strong>
+                {gpuMetrics.utilization}
+              </strong>
+            </div>
+
+            <div>
+              <span>VRAM</span>
+              <strong>
+                {gpuMetrics.memory}
+              </strong>
+            </div>
+
+            <div>
+              <span>Temperature</span>
+              <strong>
+                {gpuMetrics.temperature}
+              </strong>
+            </div>
+
+            <div>
+              <span>Power</span>
+              <strong>
+                {gpuMetrics.power}
+              </strong>
+            </div>
+
+          </div>
+
+          <div className="gpu-history-chart">
+
+            {gpuHistory.length === 0 ? (
+
+              <div className="gpu-history-empty">
+                Start the stream to collect GPU telemetry
+              </div>
+
+            ) : (
+
+              gpuHistory.map((sample, index) => {
+
+                const maxUtilization = Math.max(
+                  ...gpuHistory.map(
+                    (item) => item.utilization
+                  ),
+                  1
+                );
+
+                const height = Math.max(
+                  8,
+                  (sample.utilization / maxUtilization) * 100
+                );
+
+                return (
+                  <div
+                    className="gpu-history-bar"
+                    key={`${sample.time}-${index}`}
+                    style={{
+                      height: `${height}%`,
+                    }}
+                    title={`${sample.time} • GPU ${sample.utilization.toFixed(
+                      1
+                    )}% • VRAM ${sample.memory.toFixed(
+                      0
+                    )} MB • ${sample.temperature.toFixed(
+                      0
+                    )}°C • ${sample.power.toFixed(2)} W`}
+                  ></div>
+                );
+
+              })
+
+            )}
+
+          </div>
+
+          <div className="gpu-history-footer">
+
+            <span>GPU Utilization</span>
+
+            <span>
+              Hover bars for detailed telemetry
+            </span>
 
           </div>
 
