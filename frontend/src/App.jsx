@@ -989,6 +989,197 @@ function App() {
         </section>
 
         {/* ----------------------------------------- */}
+        {/* PIPELINE HEALTH */}
+        {/* ----------------------------------------- */}
+
+        <section className="pipeline-health-card">
+
+          <div className="pipeline-health-header">
+
+            <div>
+              <h2>Pipeline Health</h2>
+
+              <p>
+                Real-time VisionEdge system status
+              </p>
+            </div>
+
+            <div className="pipeline-health-indicator">
+
+              <span
+                className={`status-dot ${systemStatus?.backend === "online"
+                    ? "active"
+                    : ""
+                  }`}
+              ></span>
+
+              {systemStatus?.backend === "online"
+                ? "ONLINE"
+                : "OFFLINE"}
+
+            </div>
+
+          </div>
+
+          <div className="pipeline-health-grid">
+
+            {/* BACKEND */}
+
+            <div className="health-item">
+
+              <span>Backend</span>
+
+              <strong>
+                <span
+                  className={`health-dot ${systemStatus?.backend === "online"
+                      ? "active"
+                      : ""
+                    }`}
+                ></span>
+
+                {systemStatus?.backend || "—"}
+
+              </strong>
+
+            </div>
+
+            {/* VIDEO SOURCE */}
+
+            <div className="health-item">
+
+              <span>Video Source</span>
+
+              <strong>
+
+                <span
+                  className={`health-dot ${systemStatus?.video_source
+                      ? "active"
+                      : ""
+                    }`}
+                ></span>
+
+                {systemStatus?.streaming
+                  ? "ACTIVE"
+                  : systemStatus?.video_source || "—"}
+
+              </strong>
+
+            </div>
+
+            {/* TENSORRT */}
+
+            <div className="health-item">
+
+              <span>TensorRT</span>
+
+              <strong>
+
+                <span
+                  className={`health-dot ${systemStatus?.tensorRT === "ready"
+                      ? "active"
+                      : ""
+                    }`}
+                ></span>
+
+                {systemStatus?.tensorRT || "—"}
+
+              </strong>
+
+            </div>
+
+            {/* WEBRTC */}
+
+            <div className="health-item">
+
+              <span>WebRTC Peers</span>
+
+              <strong>
+
+                <span
+                  className={`health-dot ${Number(systemStatus?.active_peers) > 0
+                      ? "active"
+                      : ""
+                    }`}
+                ></span>
+
+                {systemStatus?.active_peers ?? "—"}
+
+              </strong>
+
+            </div>
+
+            {/* GPU */}
+
+            <div className="health-item">
+
+              <span>GPU</span>
+
+              <strong>
+
+                <span
+                  className={`health-dot ${systemStatus?.gpu?.available
+                      ? "active"
+                      : ""
+                    }`}
+                ></span>
+
+                {systemStatus?.gpu?.available
+                  ? "AVAILABLE"
+                  : "UNAVAILABLE"}
+
+              </strong>
+
+            </div>
+
+            {/* TARGET FPS */}
+
+            <div className="health-item">
+
+              <span>Target FPS</span>
+
+              <strong>
+                {systemStatus?.target_fps ?? "—"} FPS
+              </strong>
+
+            </div>
+
+          </div>
+
+          <div className="pipeline-health-details">
+
+            <div>
+              <span>Model</span>
+              <strong>
+                {systemStatus?.model || "—"}
+              </strong>
+            </div>
+
+            <div>
+              <span>Engine</span>
+              <strong>
+                {systemStatus?.inference_engine || "—"}
+              </strong>
+            </div>
+
+            <div>
+              <span>Input Size</span>
+              <strong>
+                {systemStatus?.input_size || "—"}
+              </strong>
+            </div>
+
+            <div>
+              <span>Confidence</span>
+              <strong>
+                {systemStatus?.confidence_threshold ?? "—"}
+              </strong>
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* ----------------------------------------- */}
         {/* PERFORMANCE */}
         {/* ----------------------------------------- */}
 
