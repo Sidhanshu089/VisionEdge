@@ -1,0 +1,614 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #0b0f14;
+  color: #f5f7fa;
+}
+
+.app {
+  min-height: 100vh;
+}
+
+.header {
+  padding: 24px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #202833;
+  background: #10151c;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.header p {
+  margin: 5px 0 0;
+  color: #8f9aaa;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #b9c2ce;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #36d399;
+}
+
+.dashboard {
+  max-width: 1200px;
+  margin: auto;
+  padding: 32px 24px;
+}
+
+.video-card,
+.performance-card,
+.backend-card,
+.metric-card {
+  background: #111821;
+  border: 1px solid #202a35;
+  border-radius: 14px;
+}
+
+.video-card {
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header h2,
+.performance-card h2,
+.backend-card h2 {
+  margin: 0;
+}
+
+.card-header p,
+.backend-card p {
+  color: #8793a3;
+  margin: 6px 0 0;
+}
+
+.live-badge {
+  background: #32191d;
+  color: #ff6b78;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.video-container {
+  height: 520px;
+  background: #070a0e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.video-placeholder {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  color: #667384;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.play-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 0 14px 0;
+
+  border: 1px solid #35404d;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #aab4c1;
+  font-size: 22px;
+}
+
+.video-placeholder h3 {
+  color: #b9c2ce;
+  margin: 0 0 6px 0;
+}
+
+.video-placeholder p {
+  margin: 0;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+.metrics {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.metric-card {
+  padding: 20px;
+}
+
+.metric-card span,
+.metric-card small,
+.performance-grid span {
+  display: block;
+  color: #8490a0;
+}
+
+.metric-card strong {
+  display: block;
+  margin: 8px 0;
+  font-size: 28px;
+}
+
+.metric-card small {
+  font-size: 12px;
+}
+
+.performance-card {
+  margin-top: 20px;
+  padding: 24px;
+}
+
+.performance-grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.performance-grid strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 18px;
+}
+
+.backend-card {
+  margin-top: 20px;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.backend-card button {
+  border: none;
+  background: #e7edf5;
+  color: #10151c;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.backend-card button:hover {
+  background: #ffffff;
+}
+
+.response {
+  margin-top: 16px;
+  padding: 16px;
+  background: #070a0e;
+  border: 1px solid #202a35;
+  border-radius: 10px;
+  color: #aeb8c5;
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  color: #657181;
+  font-size: 13px;
+}
+
+@media (max-width: 800px) {
+  .metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .performance-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .video-container {
+    height: 380px;
+  }
+
+  .header {
+    padding: 20px;
+  } 
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.stream-controls {
+  padding: 16px 24px;
+  border-top: 1px solid #202a35;
+  display: flex;
+  justify-content: center;
+}
+
+.start-button,
+.stop-button {
+  border: none;
+  padding: 11px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.start-button {
+  background: #e7edf5;
+  color: #10151c;
+}
+
+.stop-button {
+  background: #32191d;
+  color: #ff6b78;
+}
+
+.start-button:hover {
+  background: #ffffff;
+}
+
+.stop-button:hover {
+  background: #482126;
+}
+
+.status-dot.active {
+  background: #36d399;
+}
+
+.backend-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #36d399;
+}
+
+/* =========================================================
+   VISIONEDGE SYSTEM STATUS
+   ========================================================= */
+
+.backend-info {
+  flex: 1;
+}
+
+.backend-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.backend-title-row h2 {
+  margin: 0;
+}
+
+.system-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(0, 255, 170, 0.08);
+  border: 1px solid rgba(0, 255, 170, 0.2);
+  color: #00ffae;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.backend-info > p {
+  margin: 4px 0 18px;
+}
+
+.pipeline-status {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.pipeline-status span {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #9ba8ba;
+  font-size: 11px;
+}
+
+.pipeline-status strong {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.backend-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  font-size: 12px;
+  color: #00ffae;
+}
+
+/* Mobile / narrow dashboard */
+
+@media (max-width: 700px) {
+
+  .backend-title-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pipeline-status {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .backend-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+
+  .backend-status {
+    justify-content: flex-start;
+  }
+}
+
+/* =========================================================
+   LIVE PERFORMANCE CHART
+   ========================================================= */
+
+.performance-chart-card {
+  background: #111820;
+  border: 1px solid #253141;
+  border-radius: 9px;
+  padding: 18px;
+  margin-top: 12px;
+}
+
+.chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.chart-header h2 {
+  margin: 0;
+  font-size: 17px;
+  color: #ffffff;
+}
+
+.chart-header p {
+  margin: 5px 0 0;
+  font-size: 11px;
+  color: #8491a3;
+}
+
+.chart-live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #00ffae;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.chart-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.chart-stats div {
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 7px;
+}
+
+.chart-stats span {
+  display: block;
+  color: #8491a3;
+  font-size: 10px;
+  margin-bottom: 5px;
+}
+
+.chart-stats strong {
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.performance-chart {
+  height: 150px;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 15px 10px 5px;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.04) 1px,
+      transparent 1px
+    );
+  background-size: 100% 25%;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.chart-bar {
+  flex: 1;
+  min-width: 3px;
+  max-width: 18px;
+  background: #00a878;
+  border-radius: 3px 3px 0 0;
+  opacity: 0.85;
+  transition:
+    height 0.3s ease,
+    opacity 0.2s ease;
+}
+
+.chart-bar:hover {
+  opacity: 1;
+}
+
+.chart-empty {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #667386;
+  font-size: 11px;
+}
+
+.chart-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  color: #667386;
+  font-size: 9px;
+}
+
+.chart-footer span:first-child {
+  color: #00a878;
+  font-weight: 600;
+}
+
+@media (max-width: 700px) {
+
+  .chart-header {
+    flex-direction: column;
+  }
+
+  .chart-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .performance-chart {
+    height: 120px;
+  }
+
+}
+
+/* ================================================= */
+/* GPU MONITORING */
+/* ================================================= */
+
+.gpu-card {
+  background: #111820;
+  border: 1px solid #263342;
+  border-radius: 10px;
+  padding: 22px;
+  margin-top: 16px;
+}
+
+.gpu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.gpu-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.gpu-header p {
+  margin: 5px 0 0;
+  color: #8fa3b8;
+  font-size: 12px;
+}
+
+.gpu-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #00e89a;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.gpu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.gpu-metric {
+  background: #151d27;
+  border: 1px solid #263342;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.gpu-metric span {
+  display: block;
+  color: #8fa3b8;
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+
+.gpu-metric strong {
+  display: block;
+  color: #ffffff;
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.gpu-metric small {
+  display: block;
+  color: #66798d;
+  font-size: 9px;
+}
+
+@media (max-width: 700px) {
+  .gpu-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
