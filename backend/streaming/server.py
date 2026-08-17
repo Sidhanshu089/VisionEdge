@@ -120,6 +120,128 @@ def metrics():
         **active_track.latest_metrics
     }
 
+# ---------------------------------------------------------
+# BENCHMARK
+# ---------------------------------------------------------
+    
+@app.get("/benchmark")
+def benchmark():
+
+    if active_track is None:
+        return {
+            "active": False,
+            "samples": 0,
+            "gpu_samples": 0,
+        }
+
+    # -------------------------------------------------
+    # PIPELINE BENCHMARK HISTORY
+    # -------------------------------------------------
+
+    history = list(active_track.benchmark_history)
+
+    # -------------------------------------------------
+    # GPU BENCHMARK HISTORY
+    # -------------------------------------------------
+
+    gpu_history = list(active_track.gpu_benchmark_history)
+
+    def statistics(key, data):
+
+        values = [sample[key] for sample in data]
+
+        return {
+            "average": round(sum(values) / len(values), 2),
+            "minimum": round(min(values), 2),
+            "maximum": round(max(values), 2),
+        }
+
+    # -------------------------------------------------
+    # PIPELINE STATISTICS
+    # -------------------------------------------------
+
+    pipeline_result = {}
+
+    if history:
+
+        pipeline_result = {
+            "samples": len(history),
+
+            "fps": statistics(
+                "fps",
+                history
+            ),
+
+            "preprocess_ms": statistics(
+                "preprocess",
+                history
+            ),
+
+            "tensorrt_ms": statistics(
+                "tensorrt",
+                history
+            ),
+
+            "postprocess_ms": statistics(
+                "postprocess",
+                history
+            ),
+
+            "total_ms": statistics(
+                "total",
+                history
+            ),
+
+            "detections": statistics(
+                "detections",
+                history
+            ),
+        }
+
+    # -------------------------------------------------
+    # GPU STATISTICS
+    # -------------------------------------------------
+
+    gpu_result = {}
+
+    if gpu_history:
+
+        gpu_result = {
+            "samples": len(gpu_history),
+
+            "utilization": statistics(
+                "gpu_utilization",
+                gpu_history
+            ),
+
+            "memory_used_mb": statistics(
+                "memory_used",
+                gpu_history
+            ),
+
+            "temperature_c": statistics(
+                "temperature",
+                gpu_history
+            ),
+
+            "power_w": statistics(
+                "power",
+                gpu_history
+            ),
+        }
+
+    # -------------------------------------------------
+    # FINAL BENCHMARK RESPONSE
+    # -------------------------------------------------
+
+    return {
+        "active": True,
+
+        "pipeline": pipeline_result,
+
+        "gpu": gpu_result,
+    }
+
 
 # ---------------------------------------------------------
 # WEBRTC OFFER

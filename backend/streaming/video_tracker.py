@@ -18,12 +18,18 @@ COCO_CLASSES = [
 ]
 
 import time
+import threading
 
+from anyio import current_time
 import cv2
+from matplotlib import image
 import numpy as np
 
 from av import VideoFrame
 from aiortc import MediaStreamTrack
+from collections import deque
+from backend.monitoring.gpu_monitor import get_gpu_metrics
+
 
 from backend.pipeline.trt_inference import TensorRTInference
 
@@ -48,6 +54,19 @@ class TensorRTVideoTrack(MediaStreamTrack):
 
         self.frame_count = 0
         self.total_time = 0.0
+
+        self.benchmark_history = deque(maxlen=3600)
+        
+        self.gpu_benchmark_history = deque(maxlen=120)
+        self.gpu_monitor_stop = threading.Event()
+
+        self.gpu_monitor_thread = threading.Thread(
+            target=self._gpu_monitor_loop,
+            daemon=True,
+        )
+
+        self.gpu_monitor_thread.start()
+
         self.latest_metrics = {
             "frame": 0,
             "preprocess": 0.0,
@@ -61,6 +80,29 @@ class TensorRTVideoTrack(MediaStreamTrack):
 
         print("✅ TensorRT video tracker ready.")
 
+    def _gpu_monitor_loop(self):
+        
+        """Collect GPU telemetry without blocking the WebRTC frame pipeline."""
+        
+        
+        while not self.gpu_monitor_stop.is_set():
+
+            gpu = get_gpu_metrics()
+            
+
+            if gpu.get("available"):
+
+                self.gpu_benchmark_history.append({
+                    "time": time.perf_counter(),
+                    "gpu_utilization": gpu["gpu_utilization"],
+                    "memory_used": gpu["memory_used"],
+                    "memory_total": gpu["memory_total"],
+                    "temperature": gpu["temperature"],
+                    "power": gpu["power"],
+                })
+
+            self.gpu_monitor_stop.wait(0.5)
+    
     def letterbox(self, image, new_shape=(640, 640)):
 
         original_height, original_width = image.shape[:2]
@@ -245,6 +287,10 @@ class TensorRTVideoTrack(MediaStreamTrack):
         )
 
         pipeline_fps = 1000 / average_time
+        
+        # -------------------------------------------------
+        # LIVE METRICS
+        # -------------------------------------------------
 
         self.latest_metrics = {
             "frame": self.frame_count,
@@ -254,47 +300,24 @@ class TensorRTVideoTrack(MediaStreamTrack):
             "total": round(total_time, 2),
             "average": round(average_time, 2),
             "fps": round(pipeline_fps, 2),
-            "detections": detection_count
+            "detections": detection_count,
         }
 
-        # Print every 30 frames
-        if self.frame_count % 30 == 0:
 
-            print(
-                "\n📊 VisionEdge Performance"
-            )
+        # -------------------------------------------------
+        # PIPELINE BENCHMARK HISTORY
+        # -------------------------------------------------
 
-            print(
-                f"Frame        : {self.frame_count}"
-            )
+        self.benchmark_history.append({
+            "frame": self.frame_count,
+            "preprocess": preprocess_time,
+            "tensorrt": inference_time,
+            "postprocess": postprocess_time,
+            "total": total_time,
+            "fps": pipeline_fps,
+            "detections": detection_count,
+        })
 
-            print(
-                f"Preprocess   : {preprocess_time:.2f} ms"
-            )
-
-            print(
-                f"TensorRT     : {inference_time:.2f} ms"
-            )
-
-            print(
-                f"Postprocess  : {postprocess_time:.2f} ms"
-            )
-
-            print(
-                f"Total        : {total_time:.2f} ms"
-            )
-
-            print(
-                f"Average      : {average_time:.2f} ms"
-            )
-
-            print(
-                f"Pipeline FPS : {pipeline_fps:.2f}"
-            )
-
-            print(
-                f"Detections   : {detection_count}"
-            )
 
         # -------------------------------------------------
         # RETURN WEBRTC FRAME
